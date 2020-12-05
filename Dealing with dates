@@ -1,0 +1,1988 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "name": "1. Appetizers:  Some examples.ipynb",
+      "provenance": [],
+      "collapsed_sections": [],
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/hmelberg/health-analytics-using-python/blob/dev/Dealing%20with%20dates\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "vosA89WEixQc"
+      },
+      "source": [
+        "#Health Analytics in Python using Pandas\n",
+        "\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "kr_-77hreASx"
+      },
+      "source": [
+        "Hans Olav Melberg, Nashville, November, 2019\n",
+        "\n",
+        "\n",
+        "---\n",
+        "\n",
+        "\n",
+        "\n",
+        "---\n",
+        "\n",
+        "\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "2GUKCMPsixU0"
+      },
+      "source": [
+        "##Why?\n",
+        "\n",
+        "Python and Pandas provide tools that make it easy to do complicated analysis on data that is often messy in a way that is both fast, readable, and reproducible. It is also free, it comes with a large and friendly user community, and it has an extensive collection of libraries that we can use for everything from visualizations to machine learning. \n",
+        "\n",
+        "All this is true, but the real proof of the pudding is not cheap talk. Let's instead jump right into some examples that demonstrate the power of Python and its tools. These examples are meant as appetizers, and although I show the code, I will not explain all the details. The point is more to demonstrate that it is possible, using very little code, to quickly analyse health data using Python. The details of the code will be explained in later chapters.\n",
+        "\n",
+        "By the way, if you are reading this using a notebook (click on the colab link on top of this notebook), you can run and modify the code by typing CTRL+ENTER when you are in a cell.\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "ZbLLRYi3mgYy"
+      },
+      "source": [
+        "### Get necessary libraries and data - and a warning!\n",
+        "\n",
+        "For the examples below, we will use a sample of synthetic data based on inpatient hospital stays from Medicare in the US. The data is derived from real data, but modified and the results below are meant to illustrate the methods and should not be interpreted as representing real or substantive conclusions."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "5ntpfR-cycAM"
+      },
+      "source": [
+        "# Use pandas\n",
+        "import pandas as pd"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "q_jPK3K_0Vzu"
+      },
+      "source": [
+        "# Read synthetic medicare sample data on inpatient hospital stays\n",
+        "path = 'https://www.cms.gov/Research-Statistics-Data-and-Systems/Downloadable-Public-Use-Files/SynPUFs/Downloads/'\n",
+        "inpatient_file = 'DE1_0_2008_to_2010_Inpatient_Claims_Sample_1.zip'\n",
+        "\n",
+        "df = pd.read_csv(path+inpatient_file)\n"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "MivJozjHxN2S"
+      },
+      "source": [
+        "We import the pandas library, and use functions from this library by typing *pd.* and the name of the function we want to use. A useful hint is that it is often possible to press TAB after typing a dot and you will see a list of available functions or methods. For instance typing `pd.rea` and then TAB will give you many options, including `read_csv`, `read_excel`, and - one of the hidden gems - `read_clipboard()` which will try to read whatever you just copied to the clipboard into a dataframe.\n",
+        "\n",
+        "Note, by the way, that Pandas easily reads files from the internet, including zipped csv files. There is also a `read_table` function which can be used to read tables you find on a web page, for instance Wikipedia tables.\n",
+        "\n",
+        "We can give the object we read whatever names we want. Giving objects short, but informative names is always a challenge. We will start by simply naming our data *df* which is short for *dataframe*, but when we get more objects we have to become more imaginative and avoid using the - unfortunately not yet criminalized - practice of naming objects df1, df2, df3. Please do not do this! Suddenly you have twenty objects and you will be confused if they do not have meaningful names."
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "ynyUNdjWm0mQ"
+      },
+      "source": [
+        "## First look"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "94QOpsRDpt2g",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 255
+        },
+        "outputId": "1cdb9098-adc8-4130-e50b-5c117b90395b"
+      },
+      "source": [
+        "# First look\n",
+        "df.head()"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/html": [
+              "<div>\n",
+              "<style scoped>\n",
+              "    .dataframe tbody tr th:only-of-type {\n",
+              "        vertical-align: middle;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe tbody tr th {\n",
+              "        vertical-align: top;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe thead th {\n",
+              "        text-align: right;\n",
+              "    }\n",
+              "</style>\n",
+              "<table border=\"1\" class=\"dataframe\">\n",
+              "  <thead>\n",
+              "    <tr style=\"text-align: right;\">\n",
+              "      <th></th>\n",
+              "      <th>DESYNPUF_ID</th>\n",
+              "      <th>CLM_ID</th>\n",
+              "      <th>SEGMENT</th>\n",
+              "      <th>CLM_FROM_DT</th>\n",
+              "      <th>CLM_THRU_DT</th>\n",
+              "      <th>PRVDR_NUM</th>\n",
+              "      <th>CLM_PMT_AMT</th>\n",
+              "      <th>NCH_PRMRY_PYR_CLM_PD_AMT</th>\n",
+              "      <th>AT_PHYSN_NPI</th>\n",
+              "      <th>OP_PHYSN_NPI</th>\n",
+              "      <th>OT_PHYSN_NPI</th>\n",
+              "      <th>CLM_ADMSN_DT</th>\n",
+              "      <th>ADMTNG_ICD9_DGNS_CD</th>\n",
+              "      <th>CLM_PASS_THRU_PER_DIEM_AMT</th>\n",
+              "      <th>NCH_BENE_IP_DDCTBL_AMT</th>\n",
+              "      <th>NCH_BENE_PTA_COINSRNC_LBLTY_AM</th>\n",
+              "      <th>NCH_BENE_BLOOD_DDCTBL_LBLTY_AM</th>\n",
+              "      <th>CLM_UTLZTN_DAY_CNT</th>\n",
+              "      <th>NCH_BENE_DSCHRG_DT</th>\n",
+              "      <th>CLM_DRG_CD</th>\n",
+              "      <th>ICD9_DGNS_CD_1</th>\n",
+              "      <th>ICD9_DGNS_CD_2</th>\n",
+              "      <th>ICD9_DGNS_CD_3</th>\n",
+              "      <th>ICD9_DGNS_CD_4</th>\n",
+              "      <th>ICD9_DGNS_CD_5</th>\n",
+              "      <th>ICD9_DGNS_CD_6</th>\n",
+              "      <th>ICD9_DGNS_CD_7</th>\n",
+              "      <th>ICD9_DGNS_CD_8</th>\n",
+              "      <th>ICD9_DGNS_CD_9</th>\n",
+              "      <th>ICD9_DGNS_CD_10</th>\n",
+              "      <th>ICD9_PRCDR_CD_1</th>\n",
+              "      <th>ICD9_PRCDR_CD_2</th>\n",
+              "      <th>ICD9_PRCDR_CD_3</th>\n",
+              "      <th>ICD9_PRCDR_CD_4</th>\n",
+              "      <th>ICD9_PRCDR_CD_5</th>\n",
+              "      <th>ICD9_PRCDR_CD_6</th>\n",
+              "      <th>HCPCS_CD_1</th>\n",
+              "      <th>HCPCS_CD_2</th>\n",
+              "      <th>HCPCS_CD_3</th>\n",
+              "      <th>HCPCS_CD_4</th>\n",
+              "      <th>...</th>\n",
+              "      <th>HCPCS_CD_6</th>\n",
+              "      <th>HCPCS_CD_7</th>\n",
+              "      <th>HCPCS_CD_8</th>\n",
+              "      <th>HCPCS_CD_9</th>\n",
+              "      <th>HCPCS_CD_10</th>\n",
+              "      <th>HCPCS_CD_11</th>\n",
+              "      <th>HCPCS_CD_12</th>\n",
+              "      <th>HCPCS_CD_13</th>\n",
+              "      <th>HCPCS_CD_14</th>\n",
+              "      <th>HCPCS_CD_15</th>\n",
+              "      <th>HCPCS_CD_16</th>\n",
+              "      <th>HCPCS_CD_17</th>\n",
+              "      <th>HCPCS_CD_18</th>\n",
+              "      <th>HCPCS_CD_19</th>\n",
+              "      <th>HCPCS_CD_20</th>\n",
+              "      <th>HCPCS_CD_21</th>\n",
+              "      <th>HCPCS_CD_22</th>\n",
+              "      <th>HCPCS_CD_23</th>\n",
+              "      <th>HCPCS_CD_24</th>\n",
+              "      <th>HCPCS_CD_25</th>\n",
+              "      <th>HCPCS_CD_26</th>\n",
+              "      <th>HCPCS_CD_27</th>\n",
+              "      <th>HCPCS_CD_28</th>\n",
+              "      <th>HCPCS_CD_29</th>\n",
+              "      <th>HCPCS_CD_30</th>\n",
+              "      <th>HCPCS_CD_31</th>\n",
+              "      <th>HCPCS_CD_32</th>\n",
+              "      <th>HCPCS_CD_33</th>\n",
+              "      <th>HCPCS_CD_34</th>\n",
+              "      <th>HCPCS_CD_35</th>\n",
+              "      <th>HCPCS_CD_36</th>\n",
+              "      <th>HCPCS_CD_37</th>\n",
+              "      <th>HCPCS_CD_38</th>\n",
+              "      <th>HCPCS_CD_39</th>\n",
+              "      <th>HCPCS_CD_40</th>\n",
+              "      <th>HCPCS_CD_41</th>\n",
+              "      <th>HCPCS_CD_42</th>\n",
+              "      <th>HCPCS_CD_43</th>\n",
+              "      <th>HCPCS_CD_44</th>\n",
+              "      <th>HCPCS_CD_45</th>\n",
+              "    </tr>\n",
+              "  </thead>\n",
+              "  <tbody>\n",
+              "    <tr>\n",
+              "      <th>0</th>\n",
+              "      <td>00013D2EFD8E45D1</td>\n",
+              "      <td>196661176988405</td>\n",
+              "      <td>1</td>\n",
+              "      <td>20100312.0</td>\n",
+              "      <td>20100313.0</td>\n",
+              "      <td>2600GD</td>\n",
+              "      <td>4000.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>3.139084e+09</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>20100312</td>\n",
+              "      <td>4580</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>1100.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>1.0</td>\n",
+              "      <td>20100313</td>\n",
+              "      <td>217</td>\n",
+              "      <td>7802</td>\n",
+              "      <td>78820</td>\n",
+              "      <td>V4501</td>\n",
+              "      <td>4280</td>\n",
+              "      <td>2720</td>\n",
+              "      <td>4019</td>\n",
+              "      <td>V4502</td>\n",
+              "      <td>73300</td>\n",
+              "      <td>E9330</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>...</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>1</th>\n",
+              "      <td>00016F745862898F</td>\n",
+              "      <td>196201177000368</td>\n",
+              "      <td>1</td>\n",
+              "      <td>20090412.0</td>\n",
+              "      <td>20090418.0</td>\n",
+              "      <td>3900MB</td>\n",
+              "      <td>26000.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>6.476809e+09</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>20090412</td>\n",
+              "      <td>7866</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>1068.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>6.0</td>\n",
+              "      <td>20090418</td>\n",
+              "      <td>201</td>\n",
+              "      <td>1970</td>\n",
+              "      <td>4019</td>\n",
+              "      <td>5853</td>\n",
+              "      <td>7843</td>\n",
+              "      <td>2768</td>\n",
+              "      <td>71590</td>\n",
+              "      <td>2724</td>\n",
+              "      <td>19889</td>\n",
+              "      <td>5849</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>...</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2</th>\n",
+              "      <td>00016F745862898F</td>\n",
+              "      <td>196661177015632</td>\n",
+              "      <td>1</td>\n",
+              "      <td>20090831.0</td>\n",
+              "      <td>20090902.0</td>\n",
+              "      <td>3900HM</td>\n",
+              "      <td>5000.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>6.119985e+08</td>\n",
+              "      <td>6.119985e+08</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>20090831</td>\n",
+              "      <td>6186</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>1068.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>2.0</td>\n",
+              "      <td>20090902</td>\n",
+              "      <td>750</td>\n",
+              "      <td>6186</td>\n",
+              "      <td>2948</td>\n",
+              "      <td>56400</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>7092.0</td>\n",
+              "      <td>6186</td>\n",
+              "      <td>V5866</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>...</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>3</th>\n",
+              "      <td>00016F745862898F</td>\n",
+              "      <td>196091176981058</td>\n",
+              "      <td>1</td>\n",
+              "      <td>20090917.0</td>\n",
+              "      <td>20090920.0</td>\n",
+              "      <td>3913XU</td>\n",
+              "      <td>5000.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>4.971603e+09</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>1.119000e+09</td>\n",
+              "      <td>20090917</td>\n",
+              "      <td>29590</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>1068.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>3.0</td>\n",
+              "      <td>20090920</td>\n",
+              "      <td>883</td>\n",
+              "      <td>29623</td>\n",
+              "      <td>30390</td>\n",
+              "      <td>71690</td>\n",
+              "      <td>34590</td>\n",
+              "      <td>V1581</td>\n",
+              "      <td>32723</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>...</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>4</th>\n",
+              "      <td>00016F745862898F</td>\n",
+              "      <td>196261176983265</td>\n",
+              "      <td>1</td>\n",
+              "      <td>20100626.0</td>\n",
+              "      <td>20100701.0</td>\n",
+              "      <td>3900MB</td>\n",
+              "      <td>16000.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>6.408400e+09</td>\n",
+              "      <td>1.960860e+09</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>20100626</td>\n",
+              "      <td>5849</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>1100.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>5.0</td>\n",
+              "      <td>20100701</td>\n",
+              "      <td>983</td>\n",
+              "      <td>3569</td>\n",
+              "      <td>4019</td>\n",
+              "      <td>3542</td>\n",
+              "      <td>V8801</td>\n",
+              "      <td>78820</td>\n",
+              "      <td>2639</td>\n",
+              "      <td>7840</td>\n",
+              "      <td>7856</td>\n",
+              "      <td>4271</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>E8889</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>...</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "    </tr>\n",
+              "  </tbody>\n",
+              "</table>\n",
+              "<p>5 rows × 81 columns</p>\n",
+              "</div>"
+            ],
+            "text/plain": [
+              "        DESYNPUF_ID           CLM_ID  ...  HCPCS_CD_44  HCPCS_CD_45\n",
+              "0  00013D2EFD8E45D1  196661176988405  ...          NaN          NaN\n",
+              "1  00016F745862898F  196201177000368  ...          NaN          NaN\n",
+              "2  00016F745862898F  196661177015632  ...          NaN          NaN\n",
+              "3  00016F745862898F  196091176981058  ...          NaN          NaN\n",
+              "4  00016F745862898F  196261176983265  ...          NaN          NaN\n",
+              "\n",
+              "[5 rows x 81 columns]"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 9
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "-p7pbe9o0WBt",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 416
+        },
+        "outputId": "e667e366-d089-4ad0-e5c2-cec1db24a89c"
+      },
+      "source": [
+        "# List all column names\n",
+        "df.columns"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "Index(['DESYNPUF_ID', 'CLM_ID', 'SEGMENT', 'CLM_FROM_DT', 'CLM_THRU_DT',\n",
+              "       'PRVDR_NUM', 'CLM_PMT_AMT', 'NCH_PRMRY_PYR_CLM_PD_AMT', 'AT_PHYSN_NPI',\n",
+              "       'OP_PHYSN_NPI', 'OT_PHYSN_NPI', 'CLM_ADMSN_DT', 'ADMTNG_ICD9_DGNS_CD',\n",
+              "       'CLM_PASS_THRU_PER_DIEM_AMT', 'NCH_BENE_IP_DDCTBL_AMT',\n",
+              "       'NCH_BENE_PTA_COINSRNC_LBLTY_AM', 'NCH_BENE_BLOOD_DDCTBL_LBLTY_AM',\n",
+              "       'CLM_UTLZTN_DAY_CNT', 'NCH_BENE_DSCHRG_DT', 'CLM_DRG_CD',\n",
+              "       'ICD9_DGNS_CD_1', 'ICD9_DGNS_CD_2', 'ICD9_DGNS_CD_3', 'ICD9_DGNS_CD_4',\n",
+              "       'ICD9_DGNS_CD_5', 'ICD9_DGNS_CD_6', 'ICD9_DGNS_CD_7', 'ICD9_DGNS_CD_8',\n",
+              "       'ICD9_DGNS_CD_9', 'ICD9_DGNS_CD_10', 'ICD9_PRCDR_CD_1',\n",
+              "       'ICD9_PRCDR_CD_2', 'ICD9_PRCDR_CD_3', 'ICD9_PRCDR_CD_4',\n",
+              "       'ICD9_PRCDR_CD_5', 'ICD9_PRCDR_CD_6', 'HCPCS_CD_1', 'HCPCS_CD_2',\n",
+              "       'HCPCS_CD_3', 'HCPCS_CD_4', 'HCPCS_CD_5', 'HCPCS_CD_6', 'HCPCS_CD_7',\n",
+              "       'HCPCS_CD_8', 'HCPCS_CD_9', 'HCPCS_CD_10', 'HCPCS_CD_11', 'HCPCS_CD_12',\n",
+              "       'HCPCS_CD_13', 'HCPCS_CD_14', 'HCPCS_CD_15', 'HCPCS_CD_16',\n",
+              "       'HCPCS_CD_17', 'HCPCS_CD_18', 'HCPCS_CD_19', 'HCPCS_CD_20',\n",
+              "       'HCPCS_CD_21', 'HCPCS_CD_22', 'HCPCS_CD_23', 'HCPCS_CD_24',\n",
+              "       'HCPCS_CD_25', 'HCPCS_CD_26', 'HCPCS_CD_27', 'HCPCS_CD_28',\n",
+              "       'HCPCS_CD_29', 'HCPCS_CD_30', 'HCPCS_CD_31', 'HCPCS_CD_32',\n",
+              "       'HCPCS_CD_33', 'HCPCS_CD_34', 'HCPCS_CD_35', 'HCPCS_CD_36',\n",
+              "       'HCPCS_CD_37', 'HCPCS_CD_38', 'HCPCS_CD_39', 'HCPCS_CD_40',\n",
+              "       'HCPCS_CD_41', 'HCPCS_CD_42', 'HCPCS_CD_43', 'HCPCS_CD_44',\n",
+              "       'HCPCS_CD_45'],\n",
+              "      dtype='object')"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 10
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "5axih4Gf3FXH"
+      },
+      "source": [
+        "##Explanation of variable names\n",
+        "\n",
+        "[Explanations from ResDac, HTML](https://www.resdac.org/cms-data/files/ip-encounter-final/data-documentation)"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "gIrY1AlG85UE"
+      },
+      "source": [
+        "##Warm up example: Mean cost per visit, and mean payment made by the patient\n",
+        "\n",
+        "The data contains several variables that are relevant for payments:\n",
+        "* A claim payment amount: *CLM_PMT_AMT*\n",
+        "  * Note: The variable does not include all costs \n",
+        "* Deductible Amount: *NCH_BENE_IP_DDCTBL_AMT*\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "fosYa0nk9HMh",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 34
+        },
+        "outputId": "0e60030d-4468-4d12-fa0e-c5456313d351"
+      },
+      "source": [
+        "# The mean of a column \n",
+        "df['CLM_PMT_AMT'].mean()"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "9573.632755754572"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 12
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "Lk86JgeeWIzd"
+      },
+      "source": [
+        "If this is the true costs, we would then conclude that an average hospital episode create a claim of 9573 dollars.\n",
+        "\n",
+        "Note the structure of the code: We first type the name of the general object (df). We then select a given column, and finally use the method *mean()* on the column. It is important to note this structure because it is a general pattern that we will use. Some find it natural, but others find it confusing until they realize the logic. An alternative to the object oriented approach is a functional approach:\n",
+        "* Functional approach: *mean(age)*  \n",
+        "* Object oriented approach: *age.mean()* \n",
+        "\n",
+        "Python can use both approaches, but working with dataframes and Pandas, the object oriented approach is dominant. Both approaches are fine - there is no reason to get into religious wars here, just be aware of the difference in the way you structure the code.\n",
+        "\n",
+        "Notice that the object oriented approach lends itself naturally to chaining where you just add methods to the result of the previous method in the chain, while the functional approach use nested chains or piping to do the same:\n",
+        "* Method chaining: `age.mean().plot()` \n",
+        "* Nested functions: `plot(mean(age))` \n",
+        "* Piping: `age.pipe(mean).pipe(plot)`\n",
+        "\n",
+        "Pandas - and life? - becomes easier once you understand that it is object oriented - and that this is how you should structure code when using Pandas to  torture data. \n",
+        "\n",
+        "If you want more details on chains, functions and pipes, Tom Augspurger has a good discussion in his book [Modern Pandas](https://tomaugspurger.github.io/method-chaining.html). The basic argument is that the code should almost read like a sentence: Take object X, select a subgroup, calculate the mean, make a plot.\n",
+        "\n",
+        "Here we go on to some other examples:"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "AFqQ7MvS9_EJ",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 265
+        },
+        "outputId": "770804f3-1aa7-484a-c242-f0df3609908b"
+      },
+      "source": [
+        "# Histogram showing payment per visit\n",
+        "df.CLM_PMT_AMT.hist();"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "image/png": "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\nDBJJUpX/B/Y+4M3IzrelAAAAAElFTkSuQmCC\n",
+            "text/plain": [
+              "<Figure size 432x288 with 1 Axes>"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          }
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "jBP0Wa9bro4H"
+      },
+      "source": [
+        "Note that in this code we selected a column without using the square brackets [...]. In Pandas it is possible to select a column by using the dot notation as well as the square brackets. In other words:\n",
+        "`df.clm_pmt_amt.mean()`\n",
+        "does the same as:\n",
+        "`df['clm_pmt_amt'].mean()`\n",
+        "\n",
+        "The dot notation is easier, and it is commonly used for exploration, but the square bracket convention is better for long term use. It makes a clearer distinction between variables and methods. For instance, if you happen to name one of your columns mean (which you should not!), it can be confused with the method that finds the mean in the dot notation:\n",
+        "* Confusingly similar and may give errors: `age.mean.mean() `\n",
+        "* Less confusing and will always work: `age['mean'].mean()`\n",
+        "\n",
+        "In other words, the rule is that selection on objects is done by square brackets [..], while methods are applied to objects using dot notation.\n",
+        "\n",
+        "But practicality sometimes beats purity, and you will often see the dot notation used to select a column. Whatever you prefer, just make sure to use column names that are sensible, and not identical to method names. A common gotcha, for instance, is to name a column *first*, but this is a reserved method name (which selects the first row in a group) and we should not use it as a column name.\n",
+        "\n",
+        "Here is an example of how selection using dot becomes somewhat unclear due to a long variable name:"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "9F55J37P9tFE",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 36
+        },
+        "outputId": "8c08aa96-7be2-48de-96ad-162b1db8f806"
+      },
+      "source": [
+        "# How much of the claim was paid by the patient?\n",
+        "\n",
+        "# Using dot notation for column selection\n",
+        "df.NCH_BENE_IP_DDCTBL_AMT.mean()\n",
+        "\n",
+        "# Using square brackets for column selection\n",
+        "df['NCH_BENE_IP_DDCTBL_AMT'].mean()\n",
+        "\n"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "1057.0588435637433"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 36
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "UALsikpnIVmS"
+      },
+      "source": [
+        "The average deductible per event is around 1000 USD.\n",
+        "\n",
+        "Note that the automatic color marking in notebooks only highlights the variable name if it is within square brackets."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "usSmGqNr93Sj",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 265
+        },
+        "outputId": "e8a479ea-abbc-4a5c-8713-45cf96f61cb2"
+      },
+      "source": [
+        "# There seems to be three common deductible amounts\n",
+        "df['NCH_BENE_IP_DDCTBL_AMT'].hist();"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "image/png": "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\nQuvNAAAAAElFTkSuQmCC\n",
+            "text/plain": [
+              "<Figure size 432x288 with 1 Axes>"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          }
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "UzS71-plp95U"
+      },
+      "source": [
+        "## Data preparation\n",
+        "\n",
+        "Before going on to the other examples, it is helpful to make a few changes to the data. One of the variables we are going to use very often is the personal identifier. In the original data this is called *desynpuf_id* but it will be easier to use a copy called *pid*. I also prefer lower case column names to avoid having to press Caps Lock all the time."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "SKyYHyRN0WJd"
+      },
+      "source": [
+        "# easier to use pid than desynpuf_id\n",
+        "df['pid']=df.desynpuf_id\n",
+        "\n",
+        "# lower case column names\n",
+        "df.columns=df.columns.str.lower()"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "14k2YmhOcnSN"
+      },
+      "source": [
+        "##Example 1: What percentage of patients have 1, 2 .. 10 inpatient visits to the hospital?"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "_nHJSZK2clqi",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 284
+        },
+        "outputId": "c50f4d7b-bfca-42ad-b61b-7bfbf217ceea"
+      },
+      "source": [
+        "(df.groupby('pid')      # Split the dataframe based on person id\n",
+        "          .size()       # Find the size of each of the splitted dataframes \n",
+        "          .value_counts(normalize=True) # Count % of persons with 1,2 ... visits\n",
+        "          .sort_index() # Sort results  \n",
+        "          .head(10)     # Select the first 10 \n",
+        "          .plot.bar(title='Percent of patients with 1, 2 ... 10 visits')\n",
+        ");"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "image/png": "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\n",
+            "text/plain": [
+              "<Figure size 432x288 with 1 Axes>"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          }
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "duhAC2SOzc75"
+      },
+      "source": [
+        "60% of the patients had only one visit in the three year period for which we have data (2008-2010).\n",
+        "\n",
+        "The code is largely self-explanatory with the comments. \n",
+        "\n",
+        "However, the layout where each method is indented and on a separate line, deserves a comment. It is very good for readability when you have long chains, but as you can see from the code, you have enclose the whole block in  parentheses to indicate that all the methods belong together. \n",
+        "\n",
+        "Some purist might frawn, or event froth, at this. Python is a language where you are supposed to use intendation and not parentheses to mark code blocks. While I agree, and shutter a bit, the readability of the layout makes me an occasional herectic. \n",
+        "\n",
+        "The semicolon at the end makes things even worse for some because it reminds them of javascript. Luckily it is not needed. It is just there to avoid an ugly line of text that is produced together with the figure when we plot something. Feel free to drop it!\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "Al62dO1zezFq"
+      },
+      "source": [
+        "## Example 2: How many patients with hospital visits in 2009 also had a visit in 2010\n",
+        "\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "X5OgocVXclrF"
+      },
+      "source": [
+        "# mark all visits from 2010 \n",
+        "# the  date is in the *clm_adms_dt* column and we give visits from 2009 the name visits_2009\n",
+        "# but it is a numeric format and to extract the first four we must first make it a string)\n",
+        "\n",
+        "visit_2009 = df.clm_admsn_dt.astype(str).str.startswith('2009')\n",
+        "visit_2010 = df.clm_admsn_dt.astype(str).str.startswith('2010')"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "IxKJX4nhclrN"
+      },
+      "source": [
+        "Find the unique identification number for all patients in 2009 and 2010."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "2tbStUl6clrS"
+      },
+      "source": [
+        "patient_2009 = set(df[visit_2009].pid.unique())\n",
+        "patient_2010 = set(df[visit_2010].pid.unique())"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "jevpHr2igrwQ"
+      },
+      "source": [
+        "How many of the persons are in both sets (2009 and 2010)?"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "RA_TVF8ugpHQ",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 36
+        },
+        "outputId": "f5168d3b-74cd-40f2-d916-e41ed53ee196"
+      },
+      "source": [
+        "both = patient_2009 & patient_2010\n",
+        "\n",
+        "len(both)/len(patient_2009)"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "0.13406605075926517"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 19
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "GhBn8BW-g6kA"
+      },
+      "source": [
+        "13% of the patients registered in 2009 also had an inpatient hospital episode in 2010."
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "SJYUztNZhxP0"
+      },
+      "source": [
+        "## Example 3: Do some costly patients make up a large share of the costs?\n",
+        "\n",
+        "Decision makers are often interested in factors that affect total costs. This has led to an interest in learning more about the extent to which hospital costs are affected by a relatively small share of very costly patients. \n",
+        "\n",
+        "Here is some code that help answer this question.\n",
+        "\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "dmgFWXXNhsZY",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 281
+        },
+        "outputId": "706fa77d-2c91-4be0-c2af-c0fed5a48964"
+      },
+      "source": [
+        "all_payments = df.clm_pmt_amt.sum()\n",
+        "\n",
+        "costs = (df.groupby('pid')\n",
+        "              .clm_pmt_amt\n",
+        "              .sum()\n",
+        "              .div(all_payments)\n",
+        "              .sort_values()\n",
+        "              .cumsum()\n",
+        "              .reset_index())\n",
+        "\n",
+        "costs.index = (costs.index / len(costs))*100\n",
+        "\n",
+        "costs.plot(title = 'Share of total cost (y) that goes to x pct of patients',\n",
+        "           legend=None);\n"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "image/png": "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\n",
+            "text/plain": [
+              "<Figure size 432x288 with 1 Axes>"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          }
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "WsYPWlz2OIE-"
+      },
+      "source": [
+        "The code may not be obvious, but if we express it in words, all we do is:\n",
+        "- sum the cost for each patient (all events for that person)\n",
+        "- divide this sum by the total cost for all patients to find the percentage of all costs that goes to each patient\n",
+        "- make a cumulative sum of the costs, starting with the patient that has the smallest costs, and going up to the most costly patient (i.e. we sort before we apply the cumsum() method)\n",
+        "\n",
+        "This gives us a column with the share of the costs that goes to, for instance, the first 3000 patients with the lowest cost (since the series is sorted). \n",
+        "\n",
+        "It would be easier to interpret this if we change the unit from 'number of patients' to 'percentage of patients.' Instead of saying that patients from 0 to 3000 gets 21% of the health spending, we could then say that 'half of the patients get 21% of the spending.' \n",
+        "\n",
+        "To go from an absolute number to the percentage, we first reset the index which means that the index becomes a number counting from 0 and up. To calculate the percent corresponding to a patient number (say patient number 3000), all we need to do is to divide the patient number in the index by the total number of patients. \n",
+        "\n",
+        "And then we plot! \n",
+        "\n",
+        "Not only do we plot. We sit back, look at the code, and marvel at the tools that make it possible to do so much with so little. We reflect on this and say thank you to Guido, Wes and all those who built the tools. And, we translate the warm feeling into a donation to [Numfocus](https://numfocus.org/donate) and [The Python Software Foundation](https://www.python.org/psf/donations/) that help to maintain the ecosystem and its communities.\n",
+        "\n",
+        "Yes!\n",
+        "\n",
+        "And now back to something not so completely different.\n",
+        "\n",
+        "So far we have made a plot that tells us how much of the spending that goes to x% of the patients. n addition to the plot, we need a number to communicate to those who cannot interpret the plot right away. For instance, to say something about how much of the spending that goes to the most expensive patients, we could find the percentage of the spending that goes to the 20% most expensive patients:\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "iJC3D3zChsZ1",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 73
+        },
+        "outputId": "91f79357-968c-467b-ee7f-f555e6e1f7e2"
+      },
+      "source": [
+        "eighty_pct = int(len(costs)*0.8)\n",
+        "\n",
+        "costs.iloc[eighty_pct]\n"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "pid            7177889B3B0200AD\n",
+              "clm_pmt_amt            0.458308\n",
+              "Name: 80.0, dtype: object"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 33
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "rTQBI7BAj-jV"
+      },
+      "source": [
+        "Conclusion:\n",
+        "* 80% of the patients receive 46% of the spending\n",
+        "* In other words, the 20% most expensive patients, represent 54% of all costs\n",
+        "\n",
+        "Exercise\n",
+        "* Topic: Are the expensive patients chronically expensive, or do they just happen to be unlucky in a given year?\n",
+        "* Specific question: What share of the top 20% most expensive that also are in the top 20% in the next year?"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "cpGRAA82M30B"
+      },
+      "source": [
+        "## Example 4: What are the most common diseases?\n",
+        "\n",
+        "The column *clm_drg_cd* indicates the claim's Diagnosis Related Group code for the event. Although not a perfect categorization of different diseases, we can use it to get an impression of which diseases are most common for inpatient hospital admissions. We start by counting how often the different codes are used:"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "nyYgvSr8M3gY",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 225
+        },
+        "outputId": "24a82315-ea75-47ed-942c-1c71ecb3fcde"
+      },
+      "source": [
+        "df.clm_drg_cd.value_counts(normalize=True)"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "882    0.004223\n",
+              "177    0.004208\n",
+              "886    0.004118\n",
+              "887    0.004103\n",
+              "880    0.003954\n",
+              "         ...   \n",
+              "769    0.000045\n",
+              "782    0.000045\n",
+              "767    0.000045\n",
+              "780    0.000030\n",
+              "927    0.000030\n",
+              "Name: clm_drg_cd, Length: 739, dtype: float64"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 24
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "xzkdxusV59e0"
+      },
+      "source": [
+        "But this is not very helpful since we do not know what diseases code 882 or 177 etc represent. We need a codebook! "
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "3XXtOn3WNFts",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 293
+        },
+        "outputId": "86c7128c-e54e-472c-8915-bd14868f072b"
+      },
+      "source": [
+        "# Read a DRG codebook fron NBER (online) \n",
+        "drg_codebook = pd.read_csv('https://www.nber.org/drg/drgweight2010.csv')\n",
+        "# Becase the drg is a string in the df, we need to convert it to a string here too\n",
+        "drg_codebook['drg'] = drg_codebook['drg'].astype(str) \n",
+        "drg_codebook.head()"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/html": [
+              "<div>\n",
+              "<style scoped>\n",
+              "    .dataframe tbody tr th:only-of-type {\n",
+              "        vertical-align: middle;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe tbody tr th {\n",
+              "        vertical-align: top;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe thead th {\n",
+              "        text-align: right;\n",
+              "    }\n",
+              "</style>\n",
+              "<table border=\"1\" class=\"dataframe\">\n",
+              "  <thead>\n",
+              "    <tr style=\"text-align: right;\">\n",
+              "      <th></th>\n",
+              "      <th>drg</th>\n",
+              "      <th>drgnum</th>\n",
+              "      <th>drgweight</th>\n",
+              "      <th>drgdesc</th>\n",
+              "      <th>drgsys</th>\n",
+              "      <th>drgvers</th>\n",
+              "      <th>glos</th>\n",
+              "      <th>trim</th>\n",
+              "      <th>low</th>\n",
+              "      <th>alos</th>\n",
+              "      <th>postacute</th>\n",
+              "      <th>specialpay</th>\n",
+              "      <th>mdc</th>\n",
+              "      <th>medsurg</th>\n",
+              "      <th>fydate</th>\n",
+              "      <th>fyear</th>\n",
+              "      <th>mdcdesc</th>\n",
+              "    </tr>\n",
+              "  </thead>\n",
+              "  <tbody>\n",
+              "    <tr>\n",
+              "      <th>0</th>\n",
+              "      <td>1</td>\n",
+              "      <td>1</td>\n",
+              "      <td>24.8548</td>\n",
+              "      <td>1: HEART TRANSPLANT OR IMPLANT OF HEART ASSIST...</td>\n",
+              "      <td>MS-DRG</td>\n",
+              "      <td>27</td>\n",
+              "      <td>31.5</td>\n",
+              "      <td>0</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>43.900002</td>\n",
+              "      <td>No</td>\n",
+              "      <td>No</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>SURG</td>\n",
+              "      <td>10/1/2009</td>\n",
+              "      <td>2010</td>\n",
+              "      <td>0: PRINCIPAL DX CAN NOT BE ASSIGNED TO MDC</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>1</th>\n",
+              "      <td>2</td>\n",
+              "      <td>2</td>\n",
+              "      <td>11.7540</td>\n",
+              "      <td>2: HEART TRANSPLANT OR IMPLANT OF HEART ASSIST...</td>\n",
+              "      <td>MS-DRG</td>\n",
+              "      <td>27</td>\n",
+              "      <td>16.4</td>\n",
+              "      <td>0</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>21.200001</td>\n",
+              "      <td>No</td>\n",
+              "      <td>No</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>SURG</td>\n",
+              "      <td>10/1/2009</td>\n",
+              "      <td>2010</td>\n",
+              "      <td>0: PRINCIPAL DX CAN NOT BE ASSIGNED TO MDC</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2</th>\n",
+              "      <td>3</td>\n",
+              "      <td>3</td>\n",
+              "      <td>18.2667</td>\n",
+              "      <td>3: ECMO OR TRACH W MV 96+ HRS OR PDX EXC FACE,...</td>\n",
+              "      <td>MS-DRG</td>\n",
+              "      <td>27</td>\n",
+              "      <td>31.6</td>\n",
+              "      <td>0</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>38.500000</td>\n",
+              "      <td>Yes</td>\n",
+              "      <td>No</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>SURG</td>\n",
+              "      <td>10/1/2009</td>\n",
+              "      <td>2010</td>\n",
+              "      <td>0: PRINCIPAL DX CAN NOT BE ASSIGNED TO MDC</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>3</th>\n",
+              "      <td>4</td>\n",
+              "      <td>4</td>\n",
+              "      <td>11.1941</td>\n",
+              "      <td>4: TRACH W MV 96+ HRS OR PDX EXC FACE, MOUTH &amp;...</td>\n",
+              "      <td>MS-DRG</td>\n",
+              "      <td>27</td>\n",
+              "      <td>22.9</td>\n",
+              "      <td>0</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>28.200001</td>\n",
+              "      <td>Yes</td>\n",
+              "      <td>No</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>SURG</td>\n",
+              "      <td>10/1/2009</td>\n",
+              "      <td>2010</td>\n",
+              "      <td>0: PRINCIPAL DX CAN NOT BE ASSIGNED TO MDC</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>4</th>\n",
+              "      <td>5</td>\n",
+              "      <td>5</td>\n",
+              "      <td>10.1358</td>\n",
+              "      <td>5: LIVER TRANSPLANT W MCC OR INTESTINAL TRANSP...</td>\n",
+              "      <td>MS-DRG</td>\n",
+              "      <td>27</td>\n",
+              "      <td>14.9</td>\n",
+              "      <td>0</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>20.299999</td>\n",
+              "      <td>No</td>\n",
+              "      <td>No</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>SURG</td>\n",
+              "      <td>10/1/2009</td>\n",
+              "      <td>2010</td>\n",
+              "      <td>0: PRINCIPAL DX CAN NOT BE ASSIGNED TO MDC</td>\n",
+              "    </tr>\n",
+              "  </tbody>\n",
+              "</table>\n",
+              "</div>"
+            ],
+            "text/plain": [
+              "  drg  drgnum  ...  fyear                                     mdcdesc\n",
+              "0   1       1  ...   2010  0: PRINCIPAL DX CAN NOT BE ASSIGNED TO MDC\n",
+              "1   2       2  ...   2010  0: PRINCIPAL DX CAN NOT BE ASSIGNED TO MDC\n",
+              "2   3       3  ...   2010  0: PRINCIPAL DX CAN NOT BE ASSIGNED TO MDC\n",
+              "3   4       4  ...   2010  0: PRINCIPAL DX CAN NOT BE ASSIGNED TO MDC\n",
+              "4   5       5  ...   2010  0: PRINCIPAL DX CAN NOT BE ASSIGNED TO MDC\n",
+              "\n",
+              "[5 rows x 17 columns]"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 25
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "F1Thu9FT8nLR"
+      },
+      "source": [
+        "Make a dictionary with codes to its text description from the information in the dataframe: "
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "38njN4zS8lii"
+      },
+      "source": [
+        "drg2text = drg_codebook.set_index('drg').drgdesc.to_dict()"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "mZRgiWyQ8-xP"
+      },
+      "source": [
+        "Now we can count the drg codes and use *rename* and our newly created dictionary with codes and text, to change the index from coded numbers to plain text."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "oEiBk0EPO6iR",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 225
+        },
+        "outputId": "4f38d912-646b-4eb8-b283-c997c5c3ce52"
+      },
+      "source": [
+        "df.clm_drg_cd.value_counts(normalize=True).rename(index=drg2text)"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "882: NEUROSES EXCEPT DEPRESSIVE                                           0.004223\n",
+              "177: RESPIRATORY INFECTIONS & INFLAMMATIONS W MCC                         0.004208\n",
+              "886: BEHAVIORAL & DEVELOPMENTAL DISORDERS                                 0.004118\n",
+              "887: OTHER MENTAL DISORDER DIAGNOSES                                      0.004103\n",
+              "880: ACUTE ADJUSTMENT REACTION & PSYCHOSOCIAL DYSFUNCTION                 0.003954\n",
+              "                                                                            ...   \n",
+              "769: POSTPARTUM & POST ABORTION DIAGNOSES W O.R. PROCEDURE                0.000045\n",
+              "782: OTHER ANTEPARTUM DIAGNOSES W/O MEDICAL COMPLICATIONS                 0.000045\n",
+              "767: VAGINAL DELIVERY W STERILIZATION &/OR D&C                            0.000045\n",
+              "780: FALSE LABOR                                                          0.000030\n",
+              "927: EXTENSIVE BURNS OR FULL THICKNESS BURNS W MV 96+ HRS W SKIN GRAFT    0.000030\n",
+              "Name: clm_drg_cd, Length: 739, dtype: float64"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 28
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "OFW7c0kN9T3E"
+      },
+      "source": [
+        "Some might still complain that this conclusion is not very informative, since the categories are so small. The most common DRG represents less than 1% of all events. To solve this, we could use the more general Main Diagnostic Categories, but then we also have to read a codebook that tells us which main diagnostic category a DRG belongs to: "
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "8KHEHPrvNyJA",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 206
+        },
+        "outputId": "5d334c3c-dfb1-42ef-ff9b-b51d853fea4a"
+      },
+      "source": [
+        "# Get the crosswalk codebook from DRG to MDC\n",
+        "drg2mdc_codebook = pd.read_csv('https://www.nber.org/drg/drg2mdcxw2010.csv')\n",
+        "drg2mdc_codebook['drg'] = drg2mdc_codebook['drg'].astype(str) \n",
+        "drg2mdc = drg2mdg_codebook.set_index('drg').mdcdesc.to_dict()\n",
+        "drg2mdc_codebook.head()"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/html": [
+              "<div>\n",
+              "<style scoped>\n",
+              "    .dataframe tbody tr th:only-of-type {\n",
+              "        vertical-align: middle;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe tbody tr th {\n",
+              "        vertical-align: top;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe thead th {\n",
+              "        text-align: right;\n",
+              "    }\n",
+              "</style>\n",
+              "<table border=\"1\" class=\"dataframe\">\n",
+              "  <thead>\n",
+              "    <tr style=\"text-align: right;\">\n",
+              "      <th></th>\n",
+              "      <th>drg</th>\n",
+              "      <th>drgnum</th>\n",
+              "      <th>mdc</th>\n",
+              "      <th>drgdesc</th>\n",
+              "      <th>mdcdesc</th>\n",
+              "    </tr>\n",
+              "  </thead>\n",
+              "  <tbody>\n",
+              "    <tr>\n",
+              "      <th>0</th>\n",
+              "      <td>1</td>\n",
+              "      <td>1</td>\n",
+              "      <td>0</td>\n",
+              "      <td>1: HEART TRANSPLANT OR IMPLANT OF HEART ASSIST...</td>\n",
+              "      <td>0: PRINCIPAL DX CAN NOT BE ASSIGNED TO MDC</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>1</th>\n",
+              "      <td>2</td>\n",
+              "      <td>2</td>\n",
+              "      <td>0</td>\n",
+              "      <td>2: HEART TRANSPLANT OR IMPLANT OF HEART ASSIST...</td>\n",
+              "      <td>0: PRINCIPAL DX CAN NOT BE ASSIGNED TO MDC</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2</th>\n",
+              "      <td>3</td>\n",
+              "      <td>3</td>\n",
+              "      <td>0</td>\n",
+              "      <td>3: ECMO OR TRACH W MV 96+ HRS OR PDX EXC FACE,...</td>\n",
+              "      <td>0: PRINCIPAL DX CAN NOT BE ASSIGNED TO MDC</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>3</th>\n",
+              "      <td>4</td>\n",
+              "      <td>4</td>\n",
+              "      <td>0</td>\n",
+              "      <td>4: TRACH W MV 96+ HRS OR PDX EXC FACE, MOUTH &amp;...</td>\n",
+              "      <td>0: PRINCIPAL DX CAN NOT BE ASSIGNED TO MDC</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>4</th>\n",
+              "      <td>5</td>\n",
+              "      <td>5</td>\n",
+              "      <td>0</td>\n",
+              "      <td>5: LIVER TRANSPLANT W MCC OR INTESTINAL TRANSP...</td>\n",
+              "      <td>0: PRINCIPAL DX CAN NOT BE ASSIGNED TO MDC</td>\n",
+              "    </tr>\n",
+              "  </tbody>\n",
+              "</table>\n",
+              "</div>"
+            ],
+            "text/plain": [
+              "  drg  ...                                     mdcdesc\n",
+              "0   1  ...  0: PRINCIPAL DX CAN NOT BE ASSIGNED TO MDC\n",
+              "1   2  ...  0: PRINCIPAL DX CAN NOT BE ASSIGNED TO MDC\n",
+              "2   3  ...  0: PRINCIPAL DX CAN NOT BE ASSIGNED TO MDC\n",
+              "3   4  ...  0: PRINCIPAL DX CAN NOT BE ASSIGNED TO MDC\n",
+              "4   5  ...  0: PRINCIPAL DX CAN NOT BE ASSIGNED TO MDC\n",
+              "\n",
+              "[5 rows x 5 columns]"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 30
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "3OtwQB-u-K--"
+      },
+      "source": [
+        "We then take the dataframe, focus on the drg, map the drg to the text of its main diagnostic category, count (using percentage, not aboslute numbers), select the five most common catgories and plot these using horizontal bars: "
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "xR1qUZ4f-GaN",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 265
+        },
+        "outputId": "823d7c4f-6c1d-4d6f-accd-fe3cdf1461fc"
+      },
+      "source": [
+        "df.clm_drg_cd.map(drg2mdc).value_counts(normalize=True).head(5).plot.barh();"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "image/png": "iVBORw0KGgoAAAANSUhEUgAAAvgAAAD4CAYAAACZvZLKAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz\nAAALEgAACxIB0t1+/AAAADh0RVh0U29mdHdhcmUAbWF0cGxvdGxpYiB2ZXJzaW9uMy4xLjEsIGh0\ndHA6Ly9tYXRwbG90bGliLm9yZy8QZhcZAAAgAElEQVR4nOzdf/xfc/3/8dvdzyyS37Ypb5YUjcU+\nlCiL/AgfCs0i9AuhoggfPoUSNTXJb+VHn/yY/ErE/GjClzD7vTGsTVl+jVJjfm2P7x/P52vOzs7r\nx3ubvXW6Xy+X18X7fc7zPJ/P83yd897jPM/jHIoIzMzMzMysHpbq6Q6YmZmZmdni4wDfzMzMzKxG\nHOCbmZmZmdWIA3wzMzMzsxpxgG9mZmZmViPL9HQHzMzsP8vqq68eXV1dPd0NM7N/Kw899NDMiFij\nk7IO8M3MbInq6upi1KhRPd0NM7N/K5Ke6LSsU3TMzMzMzGrEAb6ZmZmZWY04wDczMzMzqxEH+GZm\nZmZmNeIA38zMzMysRhzgm5mZmZnViAN8MzMzM7MacYBvZmZmZlYjDvDNzMzMzGrE/ydbMzNboibM\neJGuY2/q6W7U2vTTdunpLphZD/IMvpmZmZlZjTjANzMzMzOrEQf4ZmZmZmY14gDfzMzMzKxGHOCb\nmZmZmdWIA3wzMzMzsxpxgG9mZmZmViMO8HuIpIskPStpYmn53pImSZoraWCHdU2XNCF/Jkv6gaR3\n5HVdjTYk9ZJ0WS43UdI9klbM6+ZIGlv4HFuof3VJr0s6pNTul3Jd43N9u+fll0iaVqjr3rx8LUk3\nShqX+/n7JvuzuqSRud4HGn1sUrbR70m53m9LWiqv21bSje3alrSxpD9ImiLpMUn/K0l53YGSnstt\nPCLpyMJ2J0qakdc9JulaSRsV1t+Z62yMw9UV202WNKSwzUck3Z/XPSzpxCb7vXUem0fy56Am/Ror\n6bTStmcX2p5dKLdX/u72KpWflf/bVSo/VtL+FX27s3HsSlovj82Ope+jMa5j8voRkrYq1HFJ3ofl\nC8fE9Fb9UDq2v1aoY8t8DC1b6p8kXZD3f4Kkj1aNcS47XdLqhd+r9qHZsXFUu30plD9C0iuSVi61\n9WKh/tPz8o0lPSpphULZm0rH0Y6FsZlVOA5/1azeUn+ul/SniuX7K53rE/J3d1Sr46nZuJqZ2VvL\n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\n",
+            "text/plain": [
+              "<Figure size 432x288 with 1 Axes>"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          }
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "02iw2qzu_oJS"
+      },
+      "source": [
+        "##Example 5: Typical length of stay\n",
+        "\n",
+        "How long is a typical inpatient stay in hospital? To answer this, we first have to convert the information in the columns to dates, the calculate the length of stay by subtracting the end date from the start date for all events, and make a plot that shows how many events there are with 1 night in hospital, 2 nights etc:"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "yaGZQjCI_pRV",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 266
+        },
+        "outputId": "9c303330-61aa-45c0-8795-772c4efd120f"
+      },
+      "source": [
+        "# Convert numeric date column to a proper date format\n",
+        "df['start_date'] = pd.to_datetime(df.clm_from_dt.astype(str).str.strip('.0'), \n",
+        "                                  format='%Y/%m/%d', \n",
+        "                                  errors='coerce')\n",
+        "df['end_date'] = pd.to_datetime(df.clm_thru_dt.astype(str).str.strip('.0'), \n",
+        "                                  format='%Y/%m/%d', \n",
+        "                                  errors='coerce')\n",
+        "# Obvious!\n",
+        "df['length_of_stay'] = df.end_date - df.start_date\n",
+        "\n",
+        "# The difference could be expressed in seconds, minures and many other units\n",
+        "# We tell it to transform the difference to number of days\n",
+        "\n",
+        "df['length_of_stay'] = df['length_of_stay'].dt.days\n",
+        "\n",
+        "# Draw a plot of the distribution of length of stays\n",
+        "df.length_of_stay.hist();\n",
+        "\n"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "image/png": "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\nhtFBFRK8CQAAAABJRU5ErkJggg==\n",
+            "text/plain": [
+              "<Figure size 432x288 with 1 Axes>"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          }
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "f_dYtShWAYsE"
+      },
+      "source": [
+        "Or, if you want a number, you could find the median, which is probably more informative that the mean in this case:"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "Be7pkdF-AmL8",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 34
+        },
+        "outputId": "e701ea51-a605-44c2-e0cb-996dcd73092d"
+      },
+      "source": [
+        "df.length_of_stay.median()"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "4.0"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 38
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "O40ZeyzQBWT9"
+      },
+      "source": [
+        "Or you can use *describe()* to get more information right away:"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "qmryhgnJA0wz",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 173
+        },
+        "outputId": "83427393-869f-44aa-8752-b5bd133de605"
+      },
+      "source": [
+        "df.length_of_stay.describe()"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "count    54273.000000\n",
+              "mean         5.677077\n",
+              "std          5.643778\n",
+              "min          0.000000\n",
+              "25%          2.000000\n",
+              "50%          4.000000\n",
+              "75%          7.000000\n",
+              "max         35.000000\n",
+              "Name: length_of_stay, dtype: float64"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 41
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "VqjrewppBA2C"
+      },
+      "source": [
+        "## Which disease group has the longest length of stay?"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "p-aoSud_DYFc"
+      },
+      "source": [
+        "To answer questions about length of stay for diseases, we first make a column with the main diagnostic category:"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "lV44PeldDYzc"
+      },
+      "source": [
+        "# Make a column for the main diagnostic category\n",
+        "df['main_diagnostic_category'] = df['clm_drg_cd'].map(drg2mdc)"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "_SoZQPnBDRox"
+      },
+      "source": [
+        "We then take the dataframe, split it by diagnostic category, focus on length of stay, take the mean (for each category) and sort the result:"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "uy48fF9kCCS1",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 486
+        },
+        "outputId": "dd6e65e9-0171-4694-a33a-9eb236861f18"
+      },
+      "source": [
+        "# Find mean length of stay in each diagnostic category\n",
+        "df.groupby('main_diagnostic_category').length_of_stay.mean().sort_values(ascending=False)"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "main_diagnostic_category\n",
+              "22: BURNS                                                                      12.200000\n",
+              "23: FACTORS INFLUENCING HLTH STAT & OTHR CONTACTS WITH HLTH SERVCS             11.409140\n",
+              "0: PRINCIPAL DX CAN NOT BE ASSIGNED TO MDC                                     10.763314\n",
+              "19: MENTAL DISEASES & DISORDERS                                                 9.958311\n",
+              "18: INFECTIOUS & PARASITIC DISEASES, SYSTEMIC OR UNSPECIFIED SITES              7.851896\n",
+              "24: MULTIPLE SIGNIFICANT TRAUMA                                                 7.661538\n",
+              "17: MYELOPROLIFERATIVE DISEASES & DISORDERS, POORLY DIFFERENTIATED NEOPLASM     7.439093\n",
+              "25: HUMAN IMMUNODEFICIENCY VIRUS INFECTIONS                                     7.019231\n",
+              "4: DISEASES & DISORDERS OF THE RESPIRATORY SYSTEM                               6.002479\n",
+              "20: ALCOHOL/DRUG USE & ALCOHOL/DRUG INDUCED ORGANIC MENTAL DISORDERS            5.879056\n",
+              "9: DISEASES & DISORDERS OF THE SKIN, SUBCUTANEOUS TISSUE & BREAST               5.812500\n",
+              "7: DISEASES & DISORDERS OF THE HEPATOBILIARY SYSTEM & PANCREAS                  5.757337\n",
+              "6: DISEASES & DISORDERS OF THE DIGESTIVE SYSTEM                                 5.523552\n",
+              "21: INJURIES, POISONINGS & TOXIC EFFECTS OF DRUGS                               5.108239\n",
+              "11: DISEASES & DISORDERS OF THE KIDNEY & URINARY TRACT                          5.059569\n",
+              "1: DISEASES & DISORDERS OF THE NERVOUS SYSTEM                                   4.886139\n",
+              "8: DISEASES & DISORDERS OF THE MUSCULOSKELETAL SYSTEM & CONN TISSUE             4.589727\n",
+              "5: DISEASES & DISORDERS OF THE CIRCULATORY SYSTEM                               4.519918\n",
+              "16: DISEASES & DISORDERS OF BLOOD, BLOOD FORMING ORGANS, IMMUNOLOG DISORD       4.188841\n",
+              "10: ENDOCRINE, NUTRITIONAL & METABOLIC DISEASES & DISORDERS                     4.180412\n",
+              "2: DISEASES & DISORDERS OF THE EYE                                              3.938776\n",
+              "13: DISEASES & DISORDERS OF THE FEMALE REPRODUCTIVE SYSTEM                      3.259958\n",
+              "3: DISEASES & DISORDERS OF THE EAR, NOSE, MOUTH & THROAT                        3.039216\n",
+              "12: DISEASES & DISORDERS OF THE MALE REPRODUCTIVE SYSTEM                        2.981191\n",
+              "14: PREGNANCY, CHILDBIRTH & THE PUERPERIUM                                      2.928571\n",
+              "Name: length_of_stay, dtype: float64"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 47
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "N8_GkzTLD3LA"
+      },
+      "source": [
+        "Burns appear to have the longest stays with more than 12 days."
+      ]
+    }
+  ]
+}
