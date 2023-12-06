@@ -8,7 +8,7 @@ A set of notebooks demonstrating methods for how to analyze hospital and prescri
 
 [2. Counting: How many and how often](https://github.com/hmelberg/health-analytics-using-python/blob/master/2_Ways_of_counting_How_many_and_how_often.ipynb)
 
-[3. Medical codes and Notation I: A case study using Charlsons Comorbidiy Index](https://github.com/hmelberg/health-analytics-using-python/blob/master/Notation_to_deal_with_medical_codes_and_Charlsons_comorbidity_index.ipynb)
+[3. Medical codes and Notation I: A case study using Charlsons Comorbidity Index](https://github.com/hmelberg/health-analytics-using-python/blob/master/Notation_to_deal_with_medical_codes_and_Charlsons_comorbidity_index.ipynb)
 
 [4. Medical codes: From codes to labels](https://github.com/hmelberg/health-analytics-using-python/blob/master/Medical_codesv2.ipynb)
 
