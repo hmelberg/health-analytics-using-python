@@ -168,7 +168,7 @@ def calculate_probabilities(expr=None, distribution_name=None, values=None, args
     # Generate default parameters if none are specified
     if not args and not kwargs:
         # Here, instead of using distribution parameters, we directly use generated probabilities
-        probabilities = get_default_parameters(distribution_name, size=len(values))
+        probabilities = approximate_probabilities(distribution_name, size=len(values))
     else:
     # Get the distribution object from scipy.stats
       distribution = getattr(stats, distribution_name)
@@ -181,8 +181,8 @@ def calculate_probabilities(expr=None, distribution_name=None, values=None, args
       else:
           raise ValueError(f"The specified distribution '{distribution_name}' does not have a PDF or PMF method.")
 
-    # Normalize the probabilities so they sum to 1
-    probabilities /= probabilities.sum()
+      # Normalize the probabilities so they sum to 1
+      probabilities /= probabilities.sum()
 
     return probabilities
 
@@ -380,9 +380,9 @@ def make_df(recipe, n):
                 # gender={'values':["m", "f"], 'distribution':'uniform(0.5)'},
                 values=v['values']
                 expr=v['distribution']
-                print("expr", expr, values)
+                #print("expr", expr, values)
                 prob=calculate_probabilities(values=values, expr=expr)
-                print("prob", prob, values)
+                #print("prob", prob, values)
 
             selected_indices = np.random.choice(len(values), size=n, p=prob, replace=True)
             data[k]=[values[i] for i in selected_indices]
